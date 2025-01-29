@@ -25,9 +25,31 @@ keep_alive()
 t = Thread(target=run)
 t.start()
 # Настройки
-BOT_TOKEN = "7537671678:AAFRy3uRWrP_cQkoR5_XVeEceDtz_tbILoo"  # Вставь сюда токен бота
-CHANNEL_ID = "@https://t.me/uristtanrykazan"  # Вставь юзернейм своего канала
-GOOGLE_SHEETS_FILE = "credentials.json"  # Файл с ключами доступа
+import json
+import os
+
+print("GOOGLE_SHEETS_CREDENTIALS:", os.getenv("GOOGLE_SHEETS_CREDENTIALS"))  # Отладка
+
+GOOGLE_SHEETS_CREDENTIALS = json.loads(os.getenv("GOOGLE_SHEETS_CREDENTIALS"))
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHANNEL_ID = os.getenv("CHANNEL_ID")
+SPREADSHEET_NAME = os.getenv("SPREADSHEET_NAME")
+
+# Загружаем данные из переменной окружения
+GOOGLE_SHEETS_CREDENTIALS = json.loads(os.getenv("GOOGLE_SHEETS_CREDENTIALS"))
+
+# Подключение к Google Sheets
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive"
+]
+creds = ServiceAccountCredentials.from_json_keyfile_dict(GOOGLE_SHEETS_CREDENTIALS, scope)
+client = gspread.authorize(creds)
+sheet = client.open(SPREADSHEET_NAME).sheet1
+# Файл с ключами доступа
 SPREADSHEET_NAME = "Посты для Telegram"  # Название твоей таблицы в Google Sheets
 
 # Подключение к Google Sheets
